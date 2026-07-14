@@ -1,0 +1,25 @@
+       IDENTIFICATION DIVISION.                                                 
+       PROGRAM-ID. TSUB04.                                                      
+       ENVIRONMENT DIVISION.                                                    
+       DATA DIVISION.                                                           
+       WORKING-STORAGE SECTION.                                                 
+                                                                                
+       LINKAGE SECTION.                                                         
+       01 PARM04.                                                               
+           COPY CPPARM04.                                                       
+                                                                                
+       PROCEDURE DIVISION USING PARM04.                                         
+                                                                                
+           DISPLAY '--- BEGIN TSUB04'                                           
+           DISPLAY 'あい 亜偉 弌仄 圡𡈽 冼𠗖'                         
+           DISPLAY '鯵鰺 壷壺'                                              
+           DISPLAY 'ⅠⅡ ⅰⅱ ①② ㈱℡ ∠ ≒ ∵'                 
+           DISPLAY 'AB ab ｱｲ'                                                   
+           DISPLAY '~ ‾ \ ¥ $ ^ ¬'                                              
+           MOVE "XXXXX" TO ITEM04-01.                                           
+           MOVE "YYYYY" TO ITEM04-02.                                           
+                                                                                
+           DISPLAY '--- END TSUB04'                                             
+                                                                                
+      *****************************************************                     
+           GOBACK.                                                              

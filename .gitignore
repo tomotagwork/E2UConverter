@@ -1,12 +1,14 @@
 # Maven
 target/
 
-# Test output
-91_testdata
-92_testoutput/
+# Test 
+# 91_testdata
+# 92_testoutput/
 
 # Logs
 *.log
 
 # Excel
 *.xlsx
+
+zzz_temp/
