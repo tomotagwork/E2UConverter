@@ -168,27 +168,29 @@
 
 ### 2-7. InvalidCharDetector
 
-**概要**: 1 レコード（行）のバイト配列を受け取り、不正文字・制御文字・SO/SI 不正を検知する。
+**概要**: 1 レコード（行）のバイト配列を受け取り、不正文字・制御文字・SO/SI 不正・コードページ未定義文字を検知する。
 
 **フィールド**
 
 | 修飾子 | 型 | フィールド名 | 説明 |
 |---|---|---|---|
 | `private` | `String` | `mode` | 入力モード（`fixed` / `stream`） |
+| `private` | `Charset` | `charset` | 変換に使用する Charset |
 
 **コンストラクタ**
 
 | 引数 | 説明 |
 |---|---|
-| `String mode` | 入力モードを受け取る。 |
+| `String mode, Charset charset` | 入力モードと Charset を受け取る。 |
 
 **メソッド**
 
 | 修飾子 | 戻り値 | メソッド名 | 引数 | 説明 |
 |---|---|---|---|---|
 | `public` | `List<InvalidCharEntry>` | `detect` | `byte[] record, int recordNo, String fileName` | レコードを検査し、不正文字エントリのリストを返す。 |
-| `private` | `boolean` | `isControlChar` | `byte b` | 制御文字判定（モードに応じた範囲チェック）。 |
+| `private` | `boolean` | `isControlChar` | `int b` | 制御文字判定（モードに応じた範囲チェック）。 |
 | `private` | `List<InvalidCharEntry>` | `validateSoSi` | `byte[] record, int recordNo, String fileName` | SO/SI ペアを検証する。 |
+| `private` | `String[]` | `convertSingleByte` | `byte b` | 1 バイトを Charset で変換し `[utf8Hex, convertedChar]` を返す。変換不能時は `["-", "-"]`。 |
 
 **不正文字判定範囲（固定長モード）**
 
@@ -197,6 +199,7 @@
 | `0x00`–`0x0D` | 制御文字 |
 | `0x10`–`0x3F`（`0x0E`/`0x0F` 除く） | 制御文字・変換不能 |
 | `0xFF` | 変換不能 |
+| `0x40`–`0xFE`（DBCS 区間外で変換結果が `?`） | コードページ未定義文字 |
 
 **不正文字判定範囲（バイトストリームモード）**
 
@@ -207,6 +210,7 @@
 | `0x16`–`0x24` | 制御文字・変換不能 |
 | `0x26`–`0x3F`（`0x0E`/`0x0F` 除く） | 制御文字・変換不能 |
 | `0xFF` | 変換不能 |
+| `0x40`–`0xFE`（DBCS 区間外で変換結果が `?`） | コードページ未定義文字 |
 
 ---
 
@@ -284,7 +288,7 @@
 | `private final` | `String` | `ebcdicHex` | EBCDIC HEX 値（例: `0x1F`） |
 | `private final` | `String` | `utf8Hex` | 変換後 UTF-8 HEX 値（変換不能時は `-`） |
 | `private final` | `String` | `convertedChar` | 変換後文字（表示不能時は `-`） |
-| `private final` | `String` | `reason` | 検知理由（`制御文字` / `SO/SI不正` / `変換不能`） |
+| `private final` | `String` | `reason` | 検知理由（`制御文字` / `SO/SI不正` / `変換不能` / `未定義文字`） |
 
 **コンストラクタ**
 

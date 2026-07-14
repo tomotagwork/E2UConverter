@@ -46,6 +46,7 @@ E2UConverter のエラーは、発生箇所と影響範囲によって以下の 
 | 制御文字検知 | `InvalidCharEntry` を生成してレポートに記録。変換結果には `?` を出力。 |
 | SO/SI ペア不正 | `InvalidCharEntry` を生成してレポートに記録。該当コードに対する変換結果には `?` を出力。 |
 | 変換不能コード | `InvalidCharEntry` を生成してレポートに記録。変換結果には `?` を出力。 |
+| コードページ未定義文字 | `InvalidCharEntry` を生成してレポートに記録（理由: `未定義文字`）。SO〜SI 区間（DBCS データバイト）は対象外。出力ファイルは Java Charset の REPLACE 設定（`?` への置換）に任せる。 |
 
 ---
 
@@ -147,3 +148,4 @@ FileConverter.convertFile(inputFile, baseDir)
 | 変換不能（`?` に置換された場合） | `-` | `-` |
 | 制御文字（表示不能） | 変換後 UTF-8 の HEX 値 | `-` |
 | SO/SI 不正 | `-` | `-` |
+| コードページ未定義文字 | `-` | `-` |

@@ -55,6 +55,25 @@ public class InvalidCharDetector {
             }
         }
 
+        // ①′ コードページ未定義文字の検知（0x40〜0xFE の範囲）
+        // SO〜SI 区間（DBCS データバイト）はスキップする
+        boolean inDbcs = false;
+        for (int i = 0; i < record.length; i++) {
+            int b = record[i] & 0xFF;
+            if (b == (SO & 0xFF)) { inDbcs = true;  continue; }
+            if (b == (SI & 0xFF)) { inDbcs = false; continue; }
+            if (inDbcs) continue; // DBCS データバイトは対象外
+            if (b >= 0x40 && b <= 0xFE) {
+                String[] converted = convertSingleByte(record[i]);
+                if ("-".equals(converted[0])) {
+                    String ebcdicHex = String.format("0x%02X", b);
+                    entries.add(new InvalidCharEntry(
+                            fileName, recordNo, i, ebcdicHex,
+                            converted[0], converted[1], "未定義文字"));
+                }
+            }
+        }
+
         // ② SO/SI ペア検証
         entries.addAll(validateSoSi(record, recordNo, fileName));
 

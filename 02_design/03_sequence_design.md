@@ -178,6 +178,23 @@ sequenceDiagram
         end
     end
 
+    Note over InvalidCharDetector: ①prime コードページ未定義文字検査（0x40 - 0xFE、DBCS 区間外）
+
+    loop record の各バイト b（offset i）
+        alt b == SO
+            InvalidCharDetector->>InvalidCharDetector: inDbcs = true、スキップ
+        else b == SI
+            InvalidCharDetector->>InvalidCharDetector: inDbcs = false、スキップ
+        else inDbcs == true
+            InvalidCharDetector->>InvalidCharDetector: DBCS データバイトのためスキップ
+        else 0x40 <= b <= 0xFE
+            InvalidCharDetector->>InvalidCharDetector: convertSingleByte(b) 呼び出し
+            alt 変換結果が "-"（コードページ未定義）
+                InvalidCharDetector->>InvalidCharDetector: InvalidCharEntry 生成（理由: 未定義文字）
+            end
+        end
+    end
+
     Note over InvalidCharDetector: ② SO/SI ペア検証
 
     InvalidCharDetector->>InvalidCharDetector: validateSoSi(record, recordNo, fileName)
